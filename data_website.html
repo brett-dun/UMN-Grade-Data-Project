@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Data</title>
+	<style type="text/css">
+		body {
+			font-family: Arial;
+			margin: 0;
+			font-size: 16px;
+		}
+		/*use jquery instead in the future*/
+
+		#tooltip {
+			background: black;
+			color: white;
+			opacity: 0.8;
+			/*border: 1px solid black;*/
+			border-radius: 5px;
+			padding: 5px;
+		}
+
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript" src="grade_data.js"></script>
+	<!--<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>-->
+	<script type="text/javascript">
+
+		function generateColor(gpa) {
+			var green = Math.floor(Math.sin((gpa-2)*Math.PI/4) * 254);
+			//console.log(green);
+			var red = Math.floor(Math.sin(gpa*Math.PI/4) * 254);
+			//console.log(red);
+			//console.log("#" + red.toString(16) + green.toString(16) + "00");
+			return "#" + red.toString(16) + green.toString(16) + "00";
+		}
+
+		function myFunction() {
+
+			var svgns = "http://www.w3.org/2000/svg";
+			var container = document.getElementById("container")
+
+			var y = 0;
+			for(var designator in DATA) {
+
+				var x = Math.floor(screen.width*0.1);
+				y += 30;
+
+				var text = document.createElementNS(svgns, 'text');
+				text.setAttributeNS(null, 'id', designator);
+				text.setAttributeNS(null, 'x', x);
+				text.setAttributeNS(null, 'y', y+6);
+				text.innerHTML = designator;
+				container.appendChild(text);
+
+				var line = document.createElementNS(svgns, 'line');
+				line.setAttributeNS(null, 'x1', Math.floor(screen.width*0.15));
+				line.setAttributeNS(null, 'x2', Math.floor(screen.width*0.9));
+				line.setAttributeNS(null, 'y1', y);
+				line.setAttributeNS(null, 'y2', y);
+				line.setAttributeNS(null, 'style', 'stroke:rgb(128,128,128); stroke-width:1px');
+				container.appendChild(line);
+				
+				for(var course in DATA[designator]) {
+					
+					x = Math.floor(screen.width*0.15 + (parseInt(course)-1000.) / 5000. * screen.width * 0.75);
+
+					var circle = document.createElementNS(svgns, 'circle');
+					circle.setAttributeNS(null, 'class', 'tooltip');
+					circle.setAttributeNS(null, 'id', designator + " " + course);
+					circle.setAttributeNS(null, 'cx', x);
+					circle.setAttributeNS(null, 'cy', y);
+					circle.setAttributeNS(null, 'r', DATA[designator][course][2]/8);
+
+					var color = generateColor(DATA[designator][course][1]);
+					circle.setAttributeNS(null, 'style', 'fill: ' + color + '; stroke: white; stroke-width: 1px; opacity: 0.65;' );
+					circle.setAttributeNS(null, 'onmousemove', "showTooltip(evt, '"+designator+" "+course+": "+DATA[designator][course][0]+"<br>Avg. GPA: "+DATA[designator][course][1]+"<br>Num. Students: "+DATA[designator][course][2]+"');");
+					circle.setAttributeNS(null, 'onmouseout', "hideTooltip();");
+					container.appendChild(circle);
+					
+				}
+
+			}
+
+			for(var i=2000; i < 6000; i+=1000) {
+				var line = document.createElementNS(svgns, 'line');
+				var x = Math.floor(screen.width*0.15 + (i-1000.) / 5000. * screen.width * 0.75);
+				line.setAttributeNS(null, 'x1', x);
+				line.setAttributeNS(null, 'x2', x);
+				line.setAttributeNS(null, 'y1', 30);
+				line.setAttributeNS(null, 'y2', y);
+				line.setAttributeNS(null, 'style', 'stroke:rgb(128,128,128); stroke-width:1px');
+				container.appendChild(line);
+			}
+
+		}
+
+		function showTooltip(evt, text) {
+			var tooltip = document.getElementById("tooltip");
+			tooltip.innerHTML = text;
+			//this is not the best way to do this - use jquery
+			tooltip.style.display = "block";
+			tooltip.style.left = $(document).width() / 2 > evt.pageX ? evt.pageX + 10 + 'px' : evt.pageX - text.length*4 - 10 + 'px';
+			tooltip.style.top = evt.pageY + 10 + 'px';
+		}
+
+		function hideTooltip() {
+			var tooltip = document.getElementById("tooltip");
+			tooltip.style.display = "none";
+		}
+
+	</script>
+</head>
+<body onload="myFunction()">
+	<div id="tooltip" display="none" style="position: absolute; display: none;"></div>
+	<svg id="container" width="100%" height="2000px"></svg>
+</body>
+</html>
