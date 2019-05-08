@@ -54,7 +54,7 @@ var DATA = {
 		"5802": ["Software Engineering II", 3., 50],
 		"5991": ["Independent Study", 3., 50],
 		"5994": ["Directed Research", 3., 50],
-		"5996": ["Curricular Practical Training"],
+		"5996": ["Curricular Practical Training", 3., 50],
 	},
 	"EE": {
 		"1301": ["Introduction to Computing Systems", 2.7, 100],

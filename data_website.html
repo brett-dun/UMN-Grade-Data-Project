@@ -1,19 +1,43 @@
 <!DOCTYPE html>
 <html>
+<!--
+TODO:
+- Consider putting header above each segment (so say 1000, 2000, etc.)
+- Build template page for individual courses (show grade distribution)
+- Use a .json instead of .js for storing the data
+- Gnerate more test data
+- Build pages for individual courses
+-->
 <head>
-	<title>Data</title>
+	<title>UMN Grade Data</title>
 	<style type="text/css">
 		body {
 			font-family: Arial;
 			margin: 0;
 			font-size: 16px;
 		}
-		/*use jquery instead in the future*/
+		
+		header {
+			padding: 60px;
+			text-align: center;
+			background: #ffcc33; /*gold*/
+			color: #7a0019; /*maroon*/
+			font-size: 30px;
+		}
+
+		.button {
+			width: 19%;
+			padding: none;
+			background: black;
+			color: white;
+			font-size: 16px;
+			border: none;
+		}
 
 		#tooltip {
 			background: black;
 			color: white;
-			opacity: 0.8;
+			opacity: 0.9;
 			/*border: 1px solid black;*/
 			border-radius: 5px;
 			padding: 5px;
@@ -21,28 +45,52 @@
 
 	</style>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script type="text/javascript" src="grade_data.js"></script>
+	<script type="text/javascript" src="fall_2018.js"></script>
+	<!--<script type="text/javascript" src="grade_data.js"></script>-->
 	<!--<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>-->
 	<script type="text/javascript">
 
+		var enabled = [true, true, true, true, true];
+		var count_enabled = 5;
+
 		function generateColor(gpa) {
-			var green = Math.floor(Math.sin((gpa-2)*Math.PI/4) * 254);
-			//console.log(green);
-			var red = Math.floor(Math.sin(gpa*Math.PI/4) * 254);
-			//console.log(red);
-			//console.log("#" + red.toString(16) + green.toString(16) + "00");
-			return "#" + red.toString(16) + green.toString(16) + "00";
+
+			if (gpa > 3.85) {
+				console.log('begin: ' + gpa);
+				//console.log(Math.sin((gpa-2)*Math.PI/4));
+				//console.log(Math.sin(gpa*Math.PI/4))
+			}
+
+			var green = Math.floor((gpa-2) / 2 * 255);
+			var red = 255 - green;
+
+			green += Math.floor( (1-Math.abs(gpa-3)) * 127);
+			red += Math.floor( (1-Math.abs(gpa-3)) * 127);
+
+			var redString = red.toString(16);
+			if (redString.length < 2)
+				redString = "0" + redString;
+
+			var greenString = green.toString(16);
+			if (greenString.length < 2)
+				greenString = "0" + greenString;
+
+			return "#" + redString + greenString + "00";
 		}
+
+		/*function compare(a, b) {
+			if(DATA[designator][course][2])
+		}*/
 
 		function myFunction() {
 
 			var svgns = "http://www.w3.org/2000/svg";
 			var container = document.getElementById("container")
 
-			var y = 0;
+			var y = 30;
 			for(var designator in DATA) {
 
-				var x = Math.floor(screen.width*0.1);
+				var x = Math.floor($(document).width()*0.1);
 				y += 30;
 
 				var text = document.createElementNS(svgns, 'text');
@@ -53,37 +101,82 @@
 				container.appendChild(text);
 
 				var line = document.createElementNS(svgns, 'line');
-				line.setAttributeNS(null, 'x1', Math.floor(screen.width*0.15));
-				line.setAttributeNS(null, 'x2', Math.floor(screen.width*0.9));
+				line.setAttributeNS(null, 'x1', Math.floor($(document).width()*0.15));
+				line.setAttributeNS(null, 'x2', Math.floor($(document).width()*0.9));
 				line.setAttributeNS(null, 'y1', y);
 				line.setAttributeNS(null, 'y2', y);
 				line.setAttributeNS(null, 'style', 'stroke:rgb(128,128,128); stroke-width:1px');
 				container.appendChild(line);
+
+				var courses = Object.keys(DATA[designator]).map(function(key) {
+					return [key, DATA[designator][key]]
+				});
+				//console.log(courses);
+				courses.sort(function(a,b) {
+					if(a[1][2] > b[1][2])
+						return -1;
+					if(a[1][2] < b[1][2])
+						return 1;
+					return 0;
+				});
+				//console.log(courses);
 				
-				for(var course in DATA[designator]) {
+				for(var course in courses) {
+
+					//console.log(course);
+
+					var courseNumber = parseInt(courses[course][0]);
+
+					if (courseNumber >= 6000)
+						continue;
+
+					if(!enabled[0] && (Math.floor(courseNumber/1000) == 1))
+						continue;
+					else if(!enabled[1] && (Math.floor(courseNumber/1000) == 2))
+						continue;
+					else if(!enabled[2] && (Math.floor(courseNumber/1000) == 3))
+						continue;
+					else if(!enabled[3] && (Math.floor(courseNumber/1000) == 4))
+						continue;
+					else if(!enabled[4] && (Math.floor(courseNumber/1000) == 5))
+						continue;
 					
-					x = Math.floor(screen.width*0.15 + (parseInt(course)-1000.) / 5000. * screen.width * 0.75);
+					var temp = 1000;
+					if(!enabled[0])
+						temp += 1000;
+					if(!enabled[1] && courseNumber >= 3000)
+						temp += 1000;
+					if(!enabled[2] && courseNumber >= 4000)
+						temp += 1000;
+					if(!enabled[3] && courseNumber >= 5000)
+						temp += 1000;
+					x = Math.floor($(document).width()*0.15 + (courseNumber-temp) / (count_enabled*1000.) * $(document).width() * 0.75);
 
 					var circle = document.createElementNS(svgns, 'circle');
 					circle.setAttributeNS(null, 'class', 'tooltip');
-					circle.setAttributeNS(null, 'id', designator + " " + course);
+					circle.setAttributeNS(null, 'id', designator + " " + courses[course][0]);
 					circle.setAttributeNS(null, 'cx', x);
 					circle.setAttributeNS(null, 'cy', y);
-					circle.setAttributeNS(null, 'r', DATA[designator][course][2]/8);
+					//console.log(DATA[designator][course][2]);
+					circle.setAttributeNS(null, 'r', Math.sqrt(2*courses[course][1][2]));
 
-					var color = generateColor(DATA[designator][course][1]);
+					var color = generateColor(courses[course][1][1]);
 					circle.setAttributeNS(null, 'style', 'fill: ' + color + '; stroke: white; stroke-width: 1px; opacity: 0.65;' );
-					circle.setAttributeNS(null, 'onmousemove', "showTooltip(evt, '"+designator+" "+course+": "+DATA[designator][course][0]+"<br>Avg. GPA: "+DATA[designator][course][1]+"<br>Num. Students: "+DATA[designator][course][2]+"');");
+					circle.setAttributeNS(null, 'onmousemove', "showTooltip(evt, '"+designator+" "+courses[course][0]+": "+courses[course][1][0]+"<br>Avg. GPA: "+courses[course][1][1]+"<br>Num. Students: "+courses[course][1][2]+"');");
 					circle.setAttributeNS(null, 'onmouseout', "hideTooltip();");
+
+					//console.log(courseNumber);
+					//console.log(courseNumber/1000);
+					
 					container.appendChild(circle);
 					
 				}
 
 			}
 
-			for(var i=2000; i < 6000; i+=1000) {
+			for(var i=2000; i < ((count_enabled+1)*1000); i+=1000) {
 				var line = document.createElementNS(svgns, 'line');
-				var x = Math.floor(screen.width*0.15 + (i-1000.) / 5000. * screen.width * 0.75);
+				var x = Math.floor($(document).width()*0.15 + (i-1000.) / (count_enabled * 1000.) * $(document).width() * 0.75);
 				line.setAttributeNS(null, 'x1', x);
 				line.setAttributeNS(null, 'x2', x);
 				line.setAttributeNS(null, 'y1', 30);
@@ -108,10 +201,62 @@
 			tooltip.style.display = "none";
 		}
 
+		function b0() {
+			count_enabled += enabled[0] ? -1 : 1;
+			enabled[0] = !enabled[0];
+			$("#b0").css("font-weight", enabled[0] ? "bold" : "normal");
+			$("#container").empty();
+			myFunction();
+		}
+
+		function b1() {
+			count_enabled += enabled[1] ? -1 : 1;
+			enabled[1] = !enabled[1];
+			$("#b1").css("font-weight", enabled[1] ? "bold" : "normal");
+			$("#container").empty();
+			myFunction();
+		}
+
+		function b2() {
+			count_enabled += enabled[2] ? -1 : 1;
+			enabled[2] = !enabled[2];
+			$("#b2").css("font-weight", enabled[2] ? "bold" : "normal");
+			$("#container").empty();
+			myFunction();
+		}
+
+		function b3() {
+			count_enabled += enabled[3] ? -1 : 1;
+			enabled[3] = !enabled[3];
+			$("#b3").css("font-weight", enabled[3] ? "bold" : "normal");
+			$("#container").empty();
+			myFunction();
+		}
+
+		function b4() {
+			count_enabled += enabled[4] ? -1 : 1;
+			enabled[4] = !enabled[4];
+			$("#b4").css("font-weight", enabled[4] ? "bold" : "normal");
+			$("#container").empty();
+			myFunction();
+		}
+
 	</script>
 </head>
 <body onload="myFunction()">
+	<header>
+		<h1>UMN Grade Data</h1>
+	</header>
+	<br>
+	<div id="buttons" style="width: 80%; margin: 0 auto;">
+		<!--Place buttons for selecting view mode here-->
+		<button id="b0" class="button" onclick="b0()" style="font-weight: bold;">1000 Level</button>
+		<button id="b1" class="button" onclick="b1()" style="font-weight: bold;">2000 Level</button>
+		<button id="b2" class="button" onclick="b2()" style="font-weight: bold;">3000 Level</button>
+		<button id="b3" class="button" onclick="b3()" style="font-weight: bold;">4000 Level</button>
+		<button id="b4" class="button" onclick="b4()" style="font-weight: bold;">5000 Level</button>
+	</div>
 	<div id="tooltip" display="none" style="position: absolute; display: none;"></div>
-	<svg id="container" width="100%" height="2000px"></svg>
+	<svg id="container" width="100%" height="6700px"></svg>
 </body>
 </html>
