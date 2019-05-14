@@ -18,11 +18,11 @@ TODO:
 		}
 		
 		header {
-			padding: 60px;
+			padding: 1px;
 			text-align: center;
 			background: #ffcc33; /*gold*/
 			color: #7a0019; /*maroon*/
-			font-size: 30px;
+			font-size: 14px;
 		}
 
 		.button {
@@ -45,25 +45,29 @@ TODO:
 
 	</style>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script type="text/javascript" src="fall_2018.js"></script>
-	<!--<script type="text/javascript" src="grade_data.js"></script>-->
-	<!--<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>-->
 	<script type="text/javascript">
 
 		var enabled = [true, true, true, true, true];
 		var count_enabled = 5;
+		var data;
 
+		$.getJSON("fall_2018.json", function(d) {
+			data = d;
+			draw();
+		});
+
+		/*
+		Generates a color based on gpa.
+		
+		returns hexcode for the generated color
+		*/
 		function generateColor(gpa) {
 
-			if (gpa > 3.85) {
-				console.log('begin: ' + gpa);
-				//console.log(Math.sin((gpa-2)*Math.PI/4));
-				//console.log(Math.sin(gpa*Math.PI/4))
-			}
-
+			//amount of red and green in the color is related to gpa
 			var green = Math.floor((gpa-2) / 2 * 255);
 			var red = 255 - green;
 
+			//in order to create brighter colors, add more of both when the gpa is around 3.
 			green += Math.floor( (1-Math.abs(gpa-3)) * 127);
 			red += Math.floor( (1-Math.abs(gpa-3)) * 127);
 
@@ -78,20 +82,19 @@ TODO:
 			return "#" + redString + greenString + "00";
 		}
 
-		/*function compare(a, b) {
-			if(DATA[designator][course][2])
-		}*/
+		//Draws the svg
+		function draw() {
 
-		function myFunction() {
+			const HEIGHT = 60;
 
 			var svgns = "http://www.w3.org/2000/svg";
 			var container = document.getElementById("container")
 
-			var y = 30;
-			for(var designator in DATA) {
+			var y = HEIGHT;
+			for(var designator in data) {
 
 				var x = Math.floor($(document).width()*0.1);
-				y += 30;
+				y += HEIGHT;
 
 				var text = document.createElementNS(svgns, 'text');
 				text.setAttributeNS(null, 'id', designator);
@@ -108,10 +111,10 @@ TODO:
 				line.setAttributeNS(null, 'style', 'stroke:rgb(128,128,128); stroke-width:1px');
 				container.appendChild(line);
 
-				var courses = Object.keys(DATA[designator]).map(function(key) {
-					return [key, DATA[designator][key]]
+				var courses = Object.keys(data[designator]).map(function(key) {
+					return [key, data[designator][key]]
 				});
-				//console.log(courses);
+				
 				courses.sort(function(a,b) {
 					if(a[1][2] > b[1][2])
 						return -1;
@@ -119,15 +122,12 @@ TODO:
 						return 1;
 					return 0;
 				});
-				//console.log(courses);
 				
 				for(var course in courses) {
 
-					//console.log(course);
-
 					var courseNumber = parseInt(courses[course][0]);
 
-					if (courseNumber >= 6000)
+					if (courseNumber < 1000 || courseNumber >= 6000)
 						continue;
 
 					if(!enabled[0] && (Math.floor(courseNumber/1000) == 1))
@@ -157,16 +157,13 @@ TODO:
 					circle.setAttributeNS(null, 'id', designator + " " + courses[course][0]);
 					circle.setAttributeNS(null, 'cx', x);
 					circle.setAttributeNS(null, 'cy', y);
-					//console.log(DATA[designator][course][2]);
-					circle.setAttributeNS(null, 'r', Math.sqrt(2*courses[course][1][2]));
+					
+					circle.setAttributeNS(null, 'r', 1.5*Math.sqrt(2*courses[course][1][2]));
 
 					var color = generateColor(courses[course][1][1]);
 					circle.setAttributeNS(null, 'style', 'fill: ' + color + '; stroke: white; stroke-width: 1px; opacity: 0.65;' );
-					circle.setAttributeNS(null, 'onmousemove', "showTooltip(evt, '"+designator+" "+courses[course][0]+": "+courses[course][1][0]+"<br>Avg. GPA: "+courses[course][1][1]+"<br>Num. Students: "+courses[course][1][2]+"');");
+					circle.setAttributeNS(null, 'onmousemove', "showTooltip(evt, '"+designator+" "+courses[course][0]+": "+courses[course][1][0]+"<br>Avg. GPA: "+courses[course][1][1].toFixed(2)+"<br>Num. Students: "+courses[course][1][2]+"');");
 					circle.setAttributeNS(null, 'onmouseout', "hideTooltip();");
-
-					//console.log(courseNumber);
-					//console.log(courseNumber/1000);
 					
 					container.appendChild(circle);
 					
@@ -179,7 +176,7 @@ TODO:
 				var x = Math.floor($(document).width()*0.15 + (i-1000.) / (count_enabled * 1000.) * $(document).width() * 0.75);
 				line.setAttributeNS(null, 'x1', x);
 				line.setAttributeNS(null, 'x2', x);
-				line.setAttributeNS(null, 'y1', 30);
+				line.setAttributeNS(null, 'y1', HEIGHT);
 				line.setAttributeNS(null, 'y2', y);
 				line.setAttributeNS(null, 'style', 'stroke:rgb(128,128,128); stroke-width:1px');
 				container.appendChild(line);
@@ -206,7 +203,7 @@ TODO:
 			enabled[0] = !enabled[0];
 			$("#b0").css("font-weight", enabled[0] ? "bold" : "normal");
 			$("#container").empty();
-			myFunction();
+			draw();
 		}
 
 		function b1() {
@@ -214,7 +211,7 @@ TODO:
 			enabled[1] = !enabled[1];
 			$("#b1").css("font-weight", enabled[1] ? "bold" : "normal");
 			$("#container").empty();
-			myFunction();
+			draw();
 		}
 
 		function b2() {
@@ -222,7 +219,7 @@ TODO:
 			enabled[2] = !enabled[2];
 			$("#b2").css("font-weight", enabled[2] ? "bold" : "normal");
 			$("#container").empty();
-			myFunction();
+			draw();
 		}
 
 		function b3() {
@@ -230,7 +227,7 @@ TODO:
 			enabled[3] = !enabled[3];
 			$("#b3").css("font-weight", enabled[3] ? "bold" : "normal");
 			$("#container").empty();
-			myFunction();
+			draw();
 		}
 
 		function b4() {
@@ -238,14 +235,14 @@ TODO:
 			enabled[4] = !enabled[4];
 			$("#b4").css("font-weight", enabled[4] ? "bold" : "normal");
 			$("#container").empty();
-			myFunction();
+			draw();
 		}
 
 	</script>
 </head>
-<body onload="myFunction()">
+<body onload="draw()">
 	<header>
-		<h1>UMN Grade Data</h1>
+		<h1>UMN Grade Data - Fall 2018</h1>
 	</header>
 	<br>
 	<div id="buttons" style="width: 80%; margin: 0 auto;">

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript">
+
+		var url = window.location.href;
+		var target = url.substring(url.indexOf(".html?sub=")+10);
+		//console.log(str.substring(str.indexOf(".html?sub=")+10));
+		console.log(target);
+
+		$.getJSON("fall_2018.json", function(data) {
+
+			for (var subject in data) {
+
+				if (subject.toUpperCase() == target.toUpperCase()) {
+
+					console.log(data[subject]);
+
+					break;
+
+				}
+			}
+
+		});
+
+		//alert('csci' == 'csci');
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>

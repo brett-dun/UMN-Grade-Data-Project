@@ -39,15 +39,23 @@ def main():
 			f = int(line[-2])
 			#print(f)
 
-			if (a+b+c+d+f) == 0:
+			count = a+b+c+d+f
+
+			if count == 0:
 				continue
 
-			average = (a*4+b*3+c*2+d*1) / (a+b+c+d+f)
+			average = (a*4+b*3+c*2+d*1) / count
+
+			#implement percentile information
+			grades = ['F']*f + ['D']*d + ['C']*c + ['B']*b + ['A']*a
+			ninetieth = grades[int(.9*count)]
+			seventy_fifth = grades[int(.75*count)]
+			twenty_fifth = grades[int(.25*count)]
 
 			if subject not in data:
 				data[subject] = {}
 
-			data[subject][number] = [description, average, total_students]
+			data[subject][number] = [description, average, total_students, ninetieth, seventy_fifth, twenty_fifth]
 
 	with open('fall_2018.json', 'w') as file:
 
