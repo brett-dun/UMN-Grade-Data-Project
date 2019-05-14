@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <!--
 TODO:
 - Consider putting header above each segment (so say 1000, 2000, etc.)
@@ -9,10 +9,18 @@ TODO:
 - Build pages for individual courses
 -->
 <head>
+
 	<title>UMN Grade Data</title>
+
+	<meta charset="utf-8">
+	<meta name="description" content="Grade data for courses offered at the University of Minnesota.">
+	<meta name="keywords" content="UMN,University of Minnesota,Twin Cities,Twin-Cities,Grade Data,Average Grade">
+	<meta name="author" content="Brett Duncan">
+
 	<link rel="stylesheet" href="index.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="index.js"></script>
+
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript" src="index.js"></script>
 	<script type="text/javascript">
 
 		var enabled = [true, true, true, true, true];
@@ -28,6 +36,7 @@ TODO:
 		function draw() {
 
 			const HEIGHT = 60;
+			const DOC_WIDTH = 1000;
 
 			var svgns = "http://www.w3.org/2000/svg";
 			var container = document.getElementById("container")
@@ -35,22 +44,23 @@ TODO:
 			var y = HEIGHT;
 			for(var designator in data) {
 
-				var x = Math.floor($(document).width()*0.1);
+				var x = Math.floor(DOC_WIDTH*0.1);
 				y += HEIGHT;
 
 				var text = document.createElementNS(svgns, 'text');
 				text.setAttributeNS(null, 'id', designator);
 				text.setAttributeNS(null, 'x', x);
 				text.setAttributeNS(null, 'y', y+6);
-				text.innerHTML = designator; //"<a href=\"subject.html?sub="+designator+"\""+designator+"</a>";
+				text.innerHTML = designator;
+				//TODO: this isn't working
 				text.onclick = function() {
 					window.location = "subject.html?sub="+designator.toLowerCase();
-				}//"location.href='subject.html?sub"+designator+"';"; //function() {alert("clicked!");}
+				}
 				container.appendChild(text);
 
 				var line = document.createElementNS(svgns, 'line');
-				line.setAttributeNS(null, 'x1', Math.floor($(document).width()*0.15));
-				line.setAttributeNS(null, 'x2', Math.floor($(document).width()*0.9));
+				line.setAttributeNS(null, 'x1', Math.floor(DOC_WIDTH*0.15));
+				line.setAttributeNS(null, 'x2', Math.floor(DOC_WIDTH*0.9));
 				line.setAttributeNS(null, 'y1', y);
 				line.setAttributeNS(null, 'y2', y);
 				line.setAttributeNS(null, 'style', 'stroke:rgb(128,128,128); stroke-width:1px');
@@ -73,9 +83,11 @@ TODO:
 
 					var courseNumber = parseInt(courses[course][0]);
 
+					//ignore courses that aren't 1xxx to 5xxx
 					if (courseNumber < 1000 || courseNumber >= 6000)
 						continue;
 
+					//keep courses that are in a range that has been disabled
 					if(!enabled[0] && (Math.floor(courseNumber/1000) == 1))
 						continue;
 					else if(!enabled[1] && (Math.floor(courseNumber/1000) == 2))
@@ -96,7 +108,8 @@ TODO:
 						temp += 1000;
 					if(!enabled[3] && courseNumber >= 5000)
 						temp += 1000;
-					x = Math.floor($(document).width()*0.15 + (courseNumber-temp) / (count_enabled*1000.) * $(document).width() * 0.75);
+					x = Math.floor(DOC_WIDTH*0.15 + (courseNumber-temp) / (count_enabled*1000.) * DOC_WIDTH * 0.75);
+
 
 					var circle = document.createElementNS(svgns, 'circle');
 					circle.setAttributeNS(null, 'class', 'tooltip');
@@ -119,7 +132,7 @@ TODO:
 
 			for(var i=2000; i < ((count_enabled+1)*1000); i+=1000) {
 				var line = document.createElementNS(svgns, 'line');
-				var x = Math.floor($(document).width()*0.15 + (i-1000.) / (count_enabled * 1000.) * $(document).width() * 0.75);
+				var x = Math.floor(DOC_WIDTH*0.15 + (i-1000.) / (count_enabled * 1000.) * DOC_WIDTH * 0.75);
 				line.setAttributeNS(null, 'x1', x);
 				line.setAttributeNS(null, 'x2', x);
 				line.setAttributeNS(null, 'y1', HEIGHT);
@@ -178,8 +191,8 @@ TODO:
 		<h1>UMN Grade Data - Fall 2018</h1>
 	</header>
 	<br>
+	<!-- TODO: add color and size scale to help people understand the data better. -->
 	<div id="buttons" style="width: 80%; margin: 0 auto;">
-		<!--Place buttons for selecting view mode here-->
 		<button id="b0" class="button" onclick="b0()" style="font-weight: bold;">1000 Level</button>
 		<button id="b1" class="button" onclick="b1()" style="font-weight: bold;">2000 Level</button>
 		<button id="b2" class="button" onclick="b2()" style="font-weight: bold;">3000 Level</button>
@@ -187,6 +200,6 @@ TODO:
 		<button id="b4" class="button" onclick="b4()" style="font-weight: bold;">5000 Level</button>
 	</div>
 	<div id="tooltip" display="none" style="position: absolute; display: none;"></div>
-	<svg id="container" width="100%" height="13150px"></svg>
+	<svg id="container" width="100%" viewBox="0 0 1000 13150"></svg>
 </body>
 </html>

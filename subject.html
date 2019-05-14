@@ -1,7 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+
 	<title></title>
+
+	<meta charset="utf-8">
+	<meta name="description" content="Grade data for courses offered at the University of Minnesota.">
+	<meta name="keywords" content="UMN,University of Minnesota,Twin Cities,Twin-Cities,Grade Data,Average Grade">
+	<meta name="author" content="Brett Duncan">
+
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script type="text/javascript">
 
@@ -12,6 +19,7 @@
 
 		$.getJSON("fall_2018.json", function(data) {
 
+			/*
 			for (var subject in data) {
 
 				if (subject.toUpperCase() == target.toUpperCase()) {
@@ -22,6 +30,8 @@
 
 				}
 			}
+			*/
+			console.log(data[target.toUpperCase()]);
 
 		});
 
