@@ -45,6 +45,7 @@ TODO:
 
 	</style>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="index.js"></script>
 	<script type="text/javascript">
 
 		var enabled = [true, true, true, true, true];
@@ -55,32 +56,6 @@ TODO:
 			data = d;
 			draw();
 		});
-
-		/*
-		Generates a color based on gpa.
-		
-		returns hexcode for the generated color
-		*/
-		function generateColor(gpa) {
-
-			//amount of red and green in the color is related to gpa
-			var green = Math.floor((gpa-2) / 2 * 255);
-			var red = 255 - green;
-
-			//in order to create brighter colors, add more of both when the gpa is around 3.
-			green += Math.floor( (1-Math.abs(gpa-3)) * 127);
-			red += Math.floor( (1-Math.abs(gpa-3)) * 127);
-
-			var redString = red.toString(16);
-			if (redString.length < 2)
-				redString = "0" + redString;
-
-			var greenString = green.toString(16);
-			if (greenString.length < 2)
-				greenString = "0" + greenString;
-
-			return "#" + redString + greenString + "00";
-		}
 
 		//Draws the svg
 		function draw() {
@@ -184,20 +159,6 @@ TODO:
 
 		}
 
-		function showTooltip(evt, text) {
-			var tooltip = document.getElementById("tooltip");
-			tooltip.innerHTML = text;
-			//this is not the best way to do this - use jquery
-			tooltip.style.display = "block";
-			tooltip.style.left = $(document).width() / 2 > evt.pageX ? evt.pageX + 10 + 'px' : evt.pageX - text.length*4 - 10 + 'px';
-			tooltip.style.top = evt.pageY + 10 + 'px';
-		}
-
-		function hideTooltip() {
-			var tooltip = document.getElementById("tooltip");
-			tooltip.style.display = "none";
-		}
-
 		function b0() {
 			count_enabled += enabled[0] ? -1 : 1;
 			enabled[0] = !enabled[0];
@@ -254,6 +215,6 @@ TODO:
 		<button id="b4" class="button" onclick="b4()" style="font-weight: bold;">5000 Level</button>
 	</div>
 	<div id="tooltip" display="none" style="position: absolute; display: none;"></div>
-	<svg id="container" width="100%" height="6700px"></svg>
+	<svg id="container" width="100%" height="13150px"></svg>
 </body>
 </html>
