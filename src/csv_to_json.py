@@ -21,22 +21,22 @@ def main():
 
 			#print(line)
 
-			subject = line[1]
-			number = line[2]
-			description = line[3]
+			subject = line[0]
+			number = line[1]
+			description = line[2]
 
-			total_students = int(line[5])
+			total_students = int(line[4])
 
-			a = int(line[6])
+			a = int(line[5])
 			#print(a)
-			b = int(line[7])
+			b = int(line[6])
 			#print(b)
-			c = int(line[8])
+			c = int(line[7])
 			#print(c)
-			d = int(line[9])
+			d = int(line[8])
 			#print(d)
 
-			f = int(line[-2])
+			f = int(line[12])
 			#print(f)
 
 			count = a+b+c+d+f
@@ -47,17 +47,19 @@ def main():
 			average = (a*4+b*3+c*2+d*1) / count
 
 			#implement percentile information
+			'''
 			grades = ['F']*f + ['D']*d + ['C']*c + ['B']*b + ['A']*a
 			ninetieth = grades[int(.9*count)]
 			seventy_fifth = grades[int(.75*count)]
 			twenty_fifth = grades[int(.25*count)]
+			'''
 
 			if subject not in data:
 				data[subject] = {}
 
-			data[subject][number] = [description, average, total_students, ninetieth, seventy_fifth, twenty_fifth]
+			data[subject][number] = [description, average, total_students, a/count, b/count, c/count, d/count, f/count]
 
-	with open('fall_2018.json', 'w') as file:
+	with open(sys.argv[2], 'w') as file:
 
 		json.dump(data, file, indent=4)
 

@@ -4,9 +4,6 @@
 TODO:
 - Consider putting header above each segment (so say 1000, 2000, etc.)
 - Build template page for individual courses (show grade distribution)
-- Use a .json instead of .js for storing the data
-- Gnerate more test data
-- Build pages for individual courses
 -->
 <head>
 
@@ -42,6 +39,93 @@ TODO:
 			var container = document.getElementById("container")
 
 			var y = HEIGHT;
+
+			/*
+			var xx = 1000;
+			var c = 0;
+			if(enabled[0]) {
+				xx += 1000;
+				c++;
+			}
+			if(enabled[1]) {
+				xx += 1000;
+				c++;
+			}
+			if(enabled[2]) {
+				xx += 1000;
+				c++;
+			}
+			if(enabled[3]) {
+				xx += 1000;
+				c++;
+			}
+			if(enabled[4]) {
+				xx += 1000;
+				c++;
+			}
+
+			xx = 0;
+
+			if(enabled[0]) {
+				var text = document.createElementNS(svgns, 'text');
+				text.setAttributeNS(null, 'id', "1000");
+				text.setAttributeNS(null, 'x', Math.floor(DOC_WIDTH*0.15 + (1500-xx) / (c*1000.) * DOC_WIDTH * 0.75));
+				text.setAttributeNS(null, 'y', y+6);
+				text.innerHTML = "1000";
+
+				container.appendChild(text);
+			}
+			if(enabled[1]) {
+				var text = document.createElementNS(svgns, 'text');
+				text.setAttributeNS(null, 'id', "2000");
+				text.setAttributeNS(null, 'x', Math.floor(DOC_WIDTH*0.15 + (2500-xx) / (c*1000.) * DOC_WIDTH * 0.75));
+				text.setAttributeNS(null, 'y', y+6);
+				text.innerHTML = "2000";
+
+				container.appendChild(text);
+			}
+			if(enabled[2]) {
+				var text = document.createElementNS(svgns, 'text');
+				text.setAttributeNS(null, 'id', "3000");
+				text.setAttributeNS(null, 'x', Math.floor(DOC_WIDTH*0.15 + (3500-xx) / (c*1000.) * DOC_WIDTH * 0.75));
+				text.setAttributeNS(null, 'y', y+6);
+				text.innerHTML = "3000";
+
+				container.appendChild(text);
+			}
+			if(enabled[3]) {
+				var text = document.createElementNS(svgns, 'text');
+				text.setAttributeNS(null, 'id', "4000");
+				text.setAttributeNS(null, 'x', Math.floor(DOC_WIDTH*0.15 + (4500-xx) / (c*1000.) * DOC_WIDTH * 0.75));
+				text.setAttributeNS(null, 'y', y+6);
+				text.innerHTML = "4000";
+
+				container.appendChild(text);
+			}
+			if(enabled[4]) {
+				var text = document.createElementNS(svgns, 'text');
+				text.setAttributeNS(null, 'id', "5000");
+				text.setAttributeNS(null, 'x', Math.floor(DOC_WIDTH*0.15 + (5500-xx) / (c*1000.) * DOC_WIDTH * 0.75));
+				text.setAttributeNS(null, 'y', y+6);
+				text.innerHTML = "5000";
+
+				container.appendChild(text);
+			}
+
+			/*
+			if(!enabled[0] && (Math.floor(courseNumber/1000) == 1)) {
+				//continue;
+			} else if(!enabled[1] && (Math.floor(courseNumber/1000) == 2)) {
+				//continue;
+			} else if(!enabled[2] && (Math.floor(courseNumber/1000) == 3)) {
+				//continue;
+			} else if(!enabled[3] && (Math.floor(courseNumber/1000) == 4)) {
+				//continue;
+			} else if(!enabled[4] && (Math.floor(courseNumber/1000) == 5)) {
+				//continue;
+			}
+			*/
+
 			for(var designator in data) {
 
 				var x = Math.floor(DOC_WIDTH*0.1);
@@ -53,9 +137,12 @@ TODO:
 				text.setAttributeNS(null, 'y', y+6);
 				text.innerHTML = designator;
 				//TODO: this isn't working
-				text.onclick = function() {
-					window.location = "subject.html?sub="+designator.toLowerCase();
+				var f = function(d) {
+					console.log(this);
+					//const s = "subject.html?sub="+d.toLowerCase();
+					//window.location = s;
 				}
+				text.onclick = f(this);
 				container.appendChild(text);
 
 				var line = document.createElementNS(svgns, 'line');
