@@ -1,8 +1,5 @@
-/*
-Generates a color based on gpa.
 
-returns hexcode for the generated color
-*/
+//generates a color based on gpa
 function generateColor(gpa) {
 
 	//amount of red and green in the color is related to gpa

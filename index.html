@@ -10,40 +10,7 @@ TODO:
 -->
 <head>
 	<title>UMN Grade Data</title>
-	<style type="text/css">
-		body {
-			font-family: Arial;
-			margin: 0;
-			font-size: 16px;
-		}
-		
-		header {
-			padding: 1px;
-			text-align: center;
-			background: #ffcc33; /*gold*/
-			color: #7a0019; /*maroon*/
-			font-size: 14px;
-		}
-
-		.button {
-			width: 19%;
-			padding: none;
-			background: black;
-			color: white;
-			font-size: 16px;
-			border: none;
-		}
-
-		#tooltip {
-			background: black;
-			color: white;
-			opacity: 0.9;
-			/*border: 1px solid black;*/
-			border-radius: 5px;
-			padding: 5px;
-		}
-
-	</style>
+	<link rel="stylesheet" href="index.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="index.js"></script>
 	<script type="text/javascript">
@@ -75,7 +42,10 @@ TODO:
 				text.setAttributeNS(null, 'id', designator);
 				text.setAttributeNS(null, 'x', x);
 				text.setAttributeNS(null, 'y', y+6);
-				text.innerHTML = designator;
+				text.innerHTML = designator; //"<a href=\"subject.html?sub="+designator+"\""+designator+"</a>";
+				text.onclick = function() {
+					window.location = "subject.html?sub="+designator.toLowerCase();
+				}//"location.href='subject.html?sub"+designator+"';"; //function() {alert("clicked!");}
 				container.appendChild(text);
 
 				var line = document.createElementNS(svgns, 'line');
@@ -90,6 +60,7 @@ TODO:
 					return [key, data[designator][key]]
 				});
 				
+				//sort course from most students to fewest students so that smaller circles are drawn on top
 				courses.sort(function(a,b) {
 					if(a[1][2] > b[1][2])
 						return -1;
@@ -159,6 +130,7 @@ TODO:
 
 		}
 
+		//TODO: combine these functions into a single function
 		function b0() {
 			count_enabled += enabled[0] ? -1 : 1;
 			enabled[0] = !enabled[0];
